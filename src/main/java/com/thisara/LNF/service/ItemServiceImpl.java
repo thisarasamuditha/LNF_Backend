@@ -4,6 +4,7 @@ import com.thisara.LNF.dto.ItemRequest;
 import com.thisara.LNF.dto.ItemResponse;
 import com.thisara.LNF.entity.Item;
 import com.thisara.LNF.entity.ItemCategory;
+import com.thisara.LNF.entity.ItemType;
 import com.thisara.LNF.entity.User;
 import com.thisara.LNF.repository.ItemRepository;
 import com.thisara.LNF.repository.UserRepository;
@@ -92,6 +93,15 @@ public class ItemServiceImpl implements ItemService {
         item.setImageUrl(request.getImageUrl());
         item.setContactInfo(request.getUser().getContactInfo());
 
+        return mapToResponse(itemRepository.save(item));
+    }
+
+    @Override
+    public ItemResponse updateItemState(Long id, ItemType type) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.setType(type);
         return mapToResponse(itemRepository.save(item));
     }
 

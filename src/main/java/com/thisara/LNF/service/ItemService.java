@@ -2,6 +2,7 @@ package com.thisara.LNF.service;
 
 import com.thisara.LNF.dto.ItemRequest;
 import com.thisara.LNF.dto.ItemResponse;
+import com.thisara.LNF.entity.ItemType;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,5 +16,6 @@ public interface ItemService {
     List<ItemResponse> getItemByUserId(Long userid);
     List<ItemResponse> getItemsByCategory(String category);
     ItemResponse updateItem(Long id, ItemRequest request);
+    ItemResponse updateItemState(Long id, ItemType type);
     void deleteItem(Long id);
 }
