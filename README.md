@@ -33,7 +33,7 @@ Update `src/main/resources/application.properties` for your environment.
 Current important properties:
 
 - `server.port=8090`
-- `spring.datasource.url=jdbc:mysql://localhost:3306/lost_found_db`
+- `spring.datasource.url=jdbc:mysql://localhost:3306/lnf`
 - `spring.datasource.username=...`
 - `spring.datasource.password=...`
 - `spring.jpa.hibernate.ddl-auto=update`
@@ -45,10 +45,24 @@ Current important properties:
 Use environment variables instead of committing credentials in source:
 
 ```properties
-spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/lost_found_db}
-spring.datasource.username=${DB_USERNAME:root}
-spring.datasource.password=${DB_PASSWORD:password}
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/lnf?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+spring.datasource.username=${DB_USER:${DB_USERNAME:root}}
+spring.datasource.password=${DB_PASSWORD:}
+spring.jpa.hibernate.ddl-auto=update
 ```
+
+With this setup, when the app starts:
+
+- MySQL database `lnf` is auto-created if it does not exist.
+- Tables/columns are auto-created or updated from JPA entities.
+
+### Troubleshooting: Access denied for user `root`@`localhost`
+
+If startup fails with `SQL Error: 1045`, check the run configuration environment variables:
+
+- Ensure `DB_USER`/`DB_USERNAME` and `DB_PASSWORD` match your real MySQL credentials.
+- Remove accidental leading/trailing spaces in values (common in IDE run configs).
+- If your local root has no password, leave `DB_PASSWORD` unset or empty.
 
 ## Run Locally
 
@@ -229,6 +243,7 @@ docker run --rm -p 8090:8090 --name lnf-backend lnf-backend
 ```
 
 > Note: `Dockerfile` currently exposes port `8088`, while the app runs on `8090`. You can either:
+>
 > - change `server.port` to `8088`, or
 > - update `Dockerfile` to expose/use `8090` consistently.
 
