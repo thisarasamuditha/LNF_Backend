@@ -2,9 +2,11 @@ package com.thisara.LNF.controller;
 
 import com.thisara.LNF.dto.ItemRequest;
 import com.thisara.LNF.dto.ItemResponse;
+import com.thisara.LNF.dto.ItemStateUpdateRequest;
 import com.thisara.LNF.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,6 +53,15 @@ public class ItemController {
     @PutMapping("/{id}")
     public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id, @RequestBody ItemRequest request) {
         return ResponseEntity.ok(itemService.updateItem(id, request));
+    }
+
+    @PatchMapping("/{id}/state")
+    public ResponseEntity<ItemResponse> updateItemState(@PathVariable Long id, @RequestBody ItemStateUpdateRequest request) {
+        if (request.getType() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.ok(itemService.updateItemState(id, request.getType()));
     }
 
     @DeleteMapping("/{id}")
