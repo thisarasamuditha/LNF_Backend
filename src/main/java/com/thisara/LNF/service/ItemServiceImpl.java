@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final CloudinaryImageService cloudinaryImageService;
 
     @Override
     public ItemResponse createItem(ItemRequest request, MultipartFile imageFile) throws IOException {
@@ -38,9 +38,12 @@ public class ItemServiceImpl implements ItemService {
         item.setType(request.getType());
         item.setLocation(request.getLocation());
         item.setDate(request.getDate());
-        item.setImageUrl(request.getImageUrl());
+        if (imageFile != null && !imageFile.isEmpty()) {
+            item.setImageUrl(cloudinaryImageService.uploadImage(imageFile));
+        } else {
+            item.setImageUrl(request.getImageUrl());
+        }
 //        item.setContactInfo(request.getUser().getContactInfo());
-        item.setImage_data(imageFile.getBytes());
 
         item.setUser(user);
 
@@ -124,12 +127,6 @@ public class ItemServiceImpl implements ItemService {
         res.setImageUrl(item.getImageUrl());
 //        res.setContactInfo(item.getContactInfo());  // Assuming item has contactInfo, if not, this should come from user
 
-        // ⚠ If storing as bytes, encode to Base64 string so frontend can render
-        if (item.getImage_data() != null) {
-            String base64Image = Base64.getEncoder().encodeToString(item.getImage_data());
-            res.setImageUrl("data:image/jpeg;base64," + base64Image);
-        }
-
         // Mapping UserDTO
         ItemResponse.UserDTO uDto = new ItemResponse.UserDTO();
         uDto.setUserid(item.getUser().getId());  // Assuming User is a related entity
@@ -140,5 +137,4 @@ public class ItemServiceImpl implements ItemService {
         res.setUser(uDto);
         return res;
     }
-
 }

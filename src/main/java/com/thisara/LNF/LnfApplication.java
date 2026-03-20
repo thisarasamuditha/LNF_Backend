@@ -9,6 +9,5 @@ public class LnfApplication {
     public static void main(String[] args) {
         SpringApplication.run(LnfApplication.class, args);
     }
-
 }
 

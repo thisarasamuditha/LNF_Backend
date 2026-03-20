@@ -23,7 +23,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestPart ItemRequest request, @RequestPart MultipartFile imageFile) throws IOException {
+    public ResponseEntity<ItemResponse> createItem(@RequestPart ItemRequest request, @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
         ItemResponse response = itemService.createItem(request, imageFile);
         return ResponseEntity.ok(response);
     }
